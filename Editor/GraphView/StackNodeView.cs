@@ -1,36 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine.UIElements;
 using WhiteSparrow.Shared.GraphEditor.Data;
 
 namespace WhiteSparrow.Shared.GraphEditor.View
 {
-	public interface INodeView
-	{
-		IGraphNodeData data { get; }
-		PortView GetPort(IGraphPortData portData);
-		Node Node { get; }
-	}
-	
-	public class NodeView : Node, INodeView
+	public class StackNodeView : UnityEditor.Experimental.GraphView.StackNode, INodeView
 	{
 		private IGraphNodeData m_Data;
 		public IGraphNodeData data => m_Data;
-
+		
 		private List<Tuple<IGraphPortData, PortView>> m_InputPorts;
 		private List<Tuple<IGraphPortData, PortView>> m_OutputPorts;
 		
 		Node INodeView.Node => this;
-		public NodeView(IGraphNodeData nodeData)
+		
+		public StackNodeView(IGraphNodeData nodeData)
 		{
 			m_Data = nodeData;
 			userData = nodeData;
-			title = nodeData.GetType().Name;
+			headerContainer.Add(new Label(nodeData.GetType().Name));
 
 			foreach (var inputPort in nodeData.InputPorts)
 			{
-				var port = new PortView(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, null);
-				port.portName = inputPort.Id;
+				var port = new PortView(Orientation.Vertical, Direction.Input, Port.Capacity.Multi, null);
+				if(nodeData.InputPorts.Count <= 1)
+					port.Q<Label>()?.RemoveFromHierarchy();
 				this.inputContainer.Add(port);
 
 				if (m_InputPorts == null)
@@ -39,8 +35,11 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			}
 			foreach (var outputPort in nodeData.OutputPorts)
 			{
-				var port = new PortView(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, null);
-				port.portName = outputPort.Id;
+				var port = new PortView(Orientation.Vertical, Direction.Output, Port.Capacity.Multi, null);
+				if (nodeData.OutputPorts.Count <= 1)
+					port.Q<Label>()?.RemoveFromHierarchy();
+				else
+					port.portName = outputPort.Id;
 				this.outputContainer.Add(port);
 
 				if (m_OutputPorts == null)
@@ -48,12 +47,13 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 				m_OutputPorts.Add(new Tuple<IGraphPortData, PortView>(outputPort, port));
 			}
 
+			var placeholder = this.Q("stackPlaceholderContainer", (string) null);
+			placeholder.RemoveFromHierarchy();
 			RefreshExpandedState();
 			RefreshPorts();
 		}
 		
 		
-
 		public PortView GetPort(IGraphPortData portData)
 		{
 			var list = portData.Direction == GraphPortDirection.Input ? m_InputPorts : m_OutputPorts;

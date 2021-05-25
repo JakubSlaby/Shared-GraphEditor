@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -15,8 +14,6 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			this.AddManipulator(m_EdgeConnector);
 		}
 
-		
-		
 		private class DefaultEdgeConnectorListener : IEdgeConnectorListener
 		{
 			public DefaultEdgeConnectorListener()

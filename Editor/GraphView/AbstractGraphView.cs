@@ -9,7 +9,6 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using WhiteSparrow.Shared.GraphEditor.Data;
-using Edge = UnityEditor.Experimental.GraphView.Edge;
 using Port = UnityEditor.Experimental.GraphView.Port;
 
 namespace WhiteSparrow.Shared.GraphEditor.View
@@ -42,7 +41,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 			GeometryGraph geometryGraph = autoLayoutGraphData.ToMSAL();
 			SugiyamaLayoutSettings layoutSettings = new SugiyamaLayoutSettings();
-			layoutSettings.Transformation = PlaneTransformation.Rotation(Math.PI/2);
+			layoutSettings.Transformation = PlaneTransformation.Rotation(Math.PI);
 			LayoutHelpers.CalculateLayout(geometryGraph, layoutSettings, null);
 			geometryGraph.UpdateBoundingBox();
 
@@ -56,10 +55,10 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 									new Vector2((float)node.Width, (float)node.Height));
 				position.position -= position.size * 0.5f;
 				var nodeView = GetNode(nodeData);
-				nodeView.SetPosition(position);
+				nodeView.Node.SetPosition(position);
 			}
-			
-			FrameAll();
+
+			this.schedule.Execute(() => FrameAll());
 		}
 
 		public void SetGraph(IGraphData graph)
@@ -77,7 +76,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			var nodeDataList = m_Graph.Nodes;
 			foreach (var nodeData in nodeDataList)
 			{
-				var node = new NodeView(nodeData);
+				var node = new StackNodeView(nodeData);
 				node.SetPosition(nodeData.position);
 				this.AddElement(node);
 			}
@@ -111,9 +110,9 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			return output;
 		}
 
-		public NodeView GetNode(IGraphNodeData data)
+		public INodeView GetNode(IGraphNodeData data)
 		{
-			return nodes.ToList().FirstOrDefault(n => n is NodeView nv && nv.data == data) as NodeView;
+			return nodes.ToList().FirstOrDefault(n => n is INodeView nv && nv.data == data) as INodeView;
 		}
 
 		public PortView GetPort(IGraphPortData data)
