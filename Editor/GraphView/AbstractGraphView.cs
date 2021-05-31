@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.Msagl.Core.Geometry.Curves;
 using Microsoft.Msagl.Core.Layout;
 using Microsoft.Msagl.Layout.Layered;
 using Microsoft.Msagl.Miscellaneous;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -20,17 +22,15 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 		public AbstractGraphView()
 		{
+			this.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>(Path.Combine(GetScriptPath(), "GraphView.uss")));
+		
 			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 			
 			m_DefaultManipulators = new AbstractGraphViewManipulators(this);
 
 			var grid = new GridBackground();
 			Insert(0, grid);
-
-			var layoutButton = new Button();
-			layoutButton.text = "layout";
-			layoutButton.clicked += OnLayout;
-			this.Add(layoutButton);
+			
 		}
 
 		private void OnLayout()
@@ -69,6 +69,8 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			if (m_Graph == null)
 				return;
 			BuildGraph();
+			schedule.Execute(OnLayout);
+			UpdateFlowState();
 		}
 
 		private void BuildGraph()
@@ -99,6 +101,26 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			DeleteElements(edges.ToList());
 		}
 
+		private List<IGraphNodeData> m_HelperActiveNodes = new List<IGraphNodeData>();
+		private void UpdateFlowState()
+		{
+			var flows = m_Graph.Flows;
+			foreach (var flowData in flows)
+			{
+				m_HelperActiveNodes.AddRange(flowData.ActiveNodes);
+			}
+
+			nodes.ForEach(node =>
+			{
+				INodeView nodeView = node as INodeView;
+				IFlowNodeView flowView = node as IFlowNodeView;
+				if (nodeView == null || flowView == null)
+					return;
+				var active = m_HelperActiveNodes.Contains(nodeView.data);
+				flowView.SetFlowState(active ? FlowNodeState.Active : FlowNodeState.Inactive);
+			});
+		}
+
 		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
 		{
 			List<Port> output = new List<Port>();
@@ -124,5 +146,30 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		{
 			return edges.ToList().FirstOrDefault(e => e is EdgeView ev && ev.data == data) as EdgeView;
 		}
+		
+		
+		
+		
+		private static string s_CachedScriptPath;
+		private static string GetScriptPath()
+		{
+			if (!string.IsNullOrEmpty(s_CachedScriptPath))
+			{
+				return s_CachedScriptPath;
+			}
+				
+			string path = new System.Diagnostics.StackTrace(0, true).GetFrame(0).GetFileName();
+			if (string.IsNullOrEmpty(path))
+				return null;
+
+			int indexOfAssets = path.LastIndexOf("Assets", StringComparison.Ordinal);
+			if (indexOfAssets >= 0)
+				path = path.Substring(indexOfAssets);
+			path = path.Replace("AbstractGraphView.cs", string.Empty);
+			
+			return s_CachedScriptPath = path;
+		}
+		
+		
 	}
 }

@@ -1,0 +1,24 @@
+.stack-node > #graph-flow-outline {
+    border-radius: 10px;
+    border-width: 2px;
+    position: absolute;
+    left: -3px;
+    right: -3px;
+    top: -3px;
+    bottom: -3px;
+}
+
+.graph-flow-outline--inactive
+{
+    
+}
+
+.graph-flow-outline--active
+{
+    border-color: orange;
+}
+
+.graph-flow-outline--complete
+{
+    border-color: greenyellow;
+}

@@ -6,7 +6,7 @@ using WhiteSparrow.Shared.GraphEditor.Data;
 
 namespace WhiteSparrow.Shared.GraphEditor.View
 {
-	public class StackNodeView : UnityEditor.Experimental.GraphView.StackNode, INodeView
+	public class StackNodeView : StackNode, INodeView, IFlowNodeView
 	{
 		private IGraphNodeData m_Data;
 		public IGraphNodeData data => m_Data;
@@ -15,7 +15,9 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		private List<Tuple<IGraphPortData, PortView>> m_OutputPorts;
 		
 		Node INodeView.Node => this;
-		
+
+		private NodeViewAdditionalElements m_NodeElements;
+
 		public StackNodeView(IGraphNodeData nodeData)
 		{
 			m_Data = nodeData;
@@ -49,6 +51,9 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 			var placeholder = this.Q("stackPlaceholderContainer", (string) null);
 			placeholder.RemoveFromHierarchy();
+
+			m_NodeElements = new NodeViewAdditionalElements(this);
+			
 			RefreshExpandedState();
 			RefreshPorts();
 		}
@@ -69,5 +74,11 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			return null;
 		}
 
+		void IFlowNodeView.SetFlowState(FlowNodeState state)
+		{
+			m_NodeElements.SetFlowState(state);
+		}
+
+		FlowNodeState IFlowNodeView.FlowState => m_NodeElements.FlowState;
 	}
 }

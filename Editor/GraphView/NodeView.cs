@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine.UIElements;
 using WhiteSparrow.Shared.GraphEditor.Data;
 
 namespace WhiteSparrow.Shared.GraphEditor.View
@@ -12,7 +13,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		Node Node { get; }
 	}
 	
-	public class NodeView : Node, INodeView
+	public class NodeView : Node, INodeView, IFlowNodeView
 	{
 		private IGraphNodeData m_Data;
 		public IGraphNodeData data => m_Data;
@@ -21,6 +22,9 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		private List<Tuple<IGraphPortData, PortView>> m_OutputPorts;
 		
 		Node INodeView.Node => this;
+		
+		private NodeViewAdditionalElements m_NodeElements;
+
 		public NodeView(IGraphNodeData nodeData)
 		{
 			m_Data = nodeData;
@@ -48,6 +52,12 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 				m_OutputPorts.Add(new Tuple<IGraphPortData, PortView>(outputPort, port));
 			}
 
+			var flowOutline = new VisualElement();
+			flowOutline.name = "graph-flow-outline";
+			hierarchy.Insert(0, flowOutline);
+
+			m_NodeElements = new NodeViewAdditionalElements(this);
+			
 			RefreshExpandedState();
 			RefreshPorts();
 		}
@@ -69,5 +79,53 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			return null;
 		}
 
+		void IFlowNodeView.SetFlowState(FlowNodeState state)
+		{
+			m_NodeElements.SetFlowState(state);
+		}
+
+		FlowNodeState IFlowNodeView.FlowState => m_NodeElements.FlowState;
+	}
+
+	internal class NodeViewAdditionalElements : IFlowNodeView
+	{
+		private VisualElement m_Target;
+		private VisualElement m_FlowIndicator;
+
+		private FlowNodeState m_FlowState;
+		
+		public NodeViewAdditionalElements(VisualElement target)
+		{
+			m_Target = target;
+
+			m_FlowIndicator = new VisualElement();
+			m_FlowIndicator.name = "graph-flow-outline";
+			m_FlowIndicator.AddToClassList("graph-flow-outline");
+			m_Target.hierarchy.Insert(0, m_FlowIndicator);
+
+		}
+
+
+		public void SetFlowState(FlowNodeState state)
+		{
+			m_FlowState = state;
+			m_FlowIndicator.RemoveFromClassList("graph-flow-outline--inactive");
+			m_FlowIndicator.RemoveFromClassList("graph-flow-outline--active");
+			m_FlowIndicator.RemoveFromClassList("graph-flow-outline--complete");
+			switch (state)
+			{
+				case FlowNodeState.Active:
+					m_FlowIndicator.AddToClassList("graph-flow-outline--active");
+					break;
+				case FlowNodeState.Complete:
+					m_FlowIndicator.AddToClassList("graph-flow-outline--complete");
+					break;
+				case FlowNodeState.Inactive:
+					m_FlowIndicator.AddToClassList("graph-flow-outline--inactive");
+					break;
+			}
+		}
+
+		public FlowNodeState FlowState => m_FlowState;
 	}
 }

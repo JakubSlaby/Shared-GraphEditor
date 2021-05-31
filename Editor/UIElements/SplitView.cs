@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace WhiteSparrow.Shared.GraphEditor.View
+namespace WhiteSparrow.Shared.GraphEditor.Elements
 {
 	public class SplitView : VisualElement
 	{
@@ -11,10 +11,8 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		{
 		}
 
-		private VisualElement m_Content;
 		public readonly VisualElement Left;
 		public readonly VisualElement Right;
-		private VisualElement m_Anchor;
 
 		public override VisualElement contentContainer => Left;
 
@@ -50,29 +48,28 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		{
 			styleSheets.Add(FetchStyleSheet());
 			this.AddToClassList("unity-two-pane-split-view");
+			this.AddToClassList("unity-two-pane-split-view--horizontal");
+			this.AddToClassList("unity-two-pane-split-view_content-container");
 
-			FetchStyleSheet();
-			m_Content = new VisualElement();
-			m_Content.name = "unity-content-container";
-			m_Content.AddToClassList("unity-two-pane-split-view--horizontal");
-			m_Content.AddToClassList("unity-two-pane-split-view_content-container");
-			
-			m_Anchor = new VisualElement();
-			m_Anchor.name = "unity-dragline-anchor";
-			m_Anchor.AddToClassList("unity-two-pane-split-view__dragline-anchor");
-			m_Anchor.AddToClassList("unity-two-pane-split-view__dragline-anchor--horizontal");
+			var anchor = new VisualElement();
+			anchor.name = "unity-dragline-anchor";
+			anchor.AddToClassList("unity-two-pane-split-view__dragline-anchor");
+			anchor.AddToClassList("unity-two-pane-split-view__dragline-anchor--horizontal");
+
+			var anchorExtender = new VisualElement();
+			anchorExtender.AddToClassList("anchor-extender");
+			anchor.hierarchy.Add(anchorExtender);
 
 			Left = new VisualElement();
 			Left.name = "left-column";
 			Right = new VisualElement();
 			Right.name = "right-column";
 			
-			m_Content.Add(Left);
-			m_Content.Add(m_Anchor);
-			m_Content.Add(Right);
-			hierarchy.Add(m_Content);
+			hierarchy.Add(Left);
+			hierarchy.Add(anchor);
+			hierarchy.Add(Right);
 			
-			m_Anchor.AddManipulator(new SplitViewDragManipulator(Left));
+			anchorExtender.AddManipulator(new SplitViewDragManipulator(Left));
 		}
 		
 		public class SplitViewDragManipulator : MouseManipulator
@@ -92,7 +89,6 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 				target.RegisterCallback(new EventCallback<MouseMoveEvent>(OnMouseMove), TrickleDown.NoTrickleDown);
 				target.RegisterCallback(new EventCallback<MouseUpEvent>(OnMouseUp), TrickleDown.NoTrickleDown);
 			}
-
 
 			protected override void UnregisterCallbacksFromTarget()
 			{
@@ -114,6 +110,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 					return;
 				m_Length = Mathf.Round(m_Length.value.value + evt.mouseDelta.x);
 				m_ResizeTarget.style.width = m_Length;
+				
 			}
 			private void OnMouseUp(MouseUpEvent evt)
 			{
