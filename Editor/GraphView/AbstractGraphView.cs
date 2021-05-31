@@ -70,7 +70,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 				return;
 			BuildGraph();
 			schedule.Execute(OnLayout);
-			UpdateFlowState();
+			schedule.Execute(UpdateFlowState);
 		}
 
 		private void BuildGraph()
@@ -119,6 +119,11 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 				var active = m_HelperActiveNodes.Contains(nodeView.data);
 				flowView.SetFlowState(active ? FlowNodeState.Active : FlowNodeState.Inactive);
 			});
+			
+			m_HelperActiveNodes.Clear();
+
+			if (this.parent != null)
+				schedule.Execute(UpdateFlowState);
 		}
 
 		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
