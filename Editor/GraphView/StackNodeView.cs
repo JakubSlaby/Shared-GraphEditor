@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Plugins.Repositories.GraphEditor.Runtime.Utils;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.UIElements;
 using WhiteSparrow.Shared.GraphEditor.Data;
 
@@ -57,7 +60,29 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			RefreshExpandedState();
 			RefreshPorts();
 		}
-		
+		public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+		{
+			base.BuildContextualMenu(evt);
+			
+			if(data is IGraphDataSource)
+				evt.menu.AppendAction("Open Script", ContextualOpenScript);
+		}
+
+		private void ContextualOpenScript(DropdownMenuAction obj)
+		{
+			if (data is IGraphDataSource dataSource)
+			{
+				GraphDataSource.OpenScriptOfType(data.GetType());
+				// var scriptPath = dataSource.GetScriptPath();
+				// if (string.IsNullOrEmpty(scriptPath))
+				// 	return;
+				//
+				//
+				// var asset = AssetDatabase.LoadMainAssetAtPath(scriptPath);
+				// AssetDatabase.OpenAsset(asset);
+			}
+		}
+
 		
 		public PortView GetPort(IGraphPortData portData)
 		{

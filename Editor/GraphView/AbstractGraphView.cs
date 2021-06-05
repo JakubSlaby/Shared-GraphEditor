@@ -33,34 +33,6 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			
 		}
 
-		private void OnLayout()
-		{
-			var autoLayoutGraphData = m_Graph as IAutoLayoutGraphData;
-			if (autoLayoutGraphData == null)
-				return;
-
-			GeometryGraph geometryGraph = autoLayoutGraphData.ToMSAL();
-			SugiyamaLayoutSettings layoutSettings = new SugiyamaLayoutSettings();
-			layoutSettings.Transformation = PlaneTransformation.Rotation(Math.PI);
-			LayoutHelpers.CalculateLayout(geometryGraph, layoutSettings, null);
-			geometryGraph.UpdateBoundingBox();
-
-			var nodes = geometryGraph.Nodes;
-			foreach (var node in nodes)
-			{
-				var nodeData = node.UserData as IGraphNodeData;
-				if (nodeData == null)
-					continue;
-				Rect position = new Rect(new Vector2((float)node.Center.X, (float)node.Center.Y),
-									new Vector2((float)node.Width, (float)node.Height));
-				position.position -= position.size * 0.5f;
-				var nodeView = GetNode(nodeData);
-				nodeView.Node.SetPosition(position);
-			}
-
-			this.schedule.Execute(() => FrameAll());
-		}
-
 		public void SetGraph(IGraphData graph)
 		{
 			ClearGraph();
@@ -69,8 +41,12 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			if (m_Graph == null)
 				return;
 			BuildGraph();
-			schedule.Execute(OnLayout);
-			schedule.Execute(UpdateFlowState);
+			schedule.Execute(LayoutGraph);
+
+			// if (graph is IFlowGraphData flowGraph)
+			// {
+			// 	flowGraph.onFlowStateChange += UpdateFlowState;
+			// }
 		}
 
 		private void BuildGraph()
@@ -97,34 +73,15 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 		private void ClearGraph()
 		{
+			// if (m_Graph is IFlowGraphData flowGraph)
+			// {
+			// 	flowGraph.onFlowStateChange += UpdateFlowState;
+			// }
+			
 			DeleteElements(nodes.ToList());
 			DeleteElements(edges.ToList());
 		}
 
-		private List<IGraphNodeData> m_HelperActiveNodes = new List<IGraphNodeData>();
-		private void UpdateFlowState()
-		{
-			var flows = m_Graph.Flows;
-			foreach (var flowData in flows)
-			{
-				m_HelperActiveNodes.AddRange(flowData.ActiveNodes);
-			}
-
-			nodes.ForEach(node =>
-			{
-				INodeView nodeView = node as INodeView;
-				IFlowNodeView flowView = node as IFlowNodeView;
-				if (nodeView == null || flowView == null)
-					return;
-				var active = m_HelperActiveNodes.Contains(nodeView.data);
-				flowView.SetFlowState(active ? FlowNodeState.Active : FlowNodeState.Inactive);
-			});
-			
-			m_HelperActiveNodes.Clear();
-
-			if (this.parent != null)
-				schedule.Execute(UpdateFlowState);
-		}
 
 		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
 		{
@@ -152,9 +109,6 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			return edges.ToList().FirstOrDefault(e => e is EdgeView ev && ev.data == data) as EdgeView;
 		}
 		
-		
-		
-		
 		private static string s_CachedScriptPath;
 		private static string GetScriptPath()
 		{
@@ -174,7 +128,75 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			
 			return s_CachedScriptPath = path;
 		}
+
+
+#region Layout
 		
+		private void LayoutGraph()
+		{
+			var autoLayoutGraphData = m_Graph as IAutoLayoutGraphData;
+			if (autoLayoutGraphData == null)
+				return;
+
+			GeometryGraph geometryGraph = autoLayoutGraphData.ToMSAL();
+			SugiyamaLayoutSettings layoutSettings = new SugiyamaLayoutSettings();
+			layoutSettings.Transformation = PlaneTransformation.Rotation(Math.PI);
+			LayoutHelpers.CalculateLayout(geometryGraph, layoutSettings, null);
+			geometryGraph.UpdateBoundingBox();
+
+			var nodes = geometryGraph.Nodes;
+			foreach (var node in nodes)
+			{
+				var nodeData = node.UserData as IGraphNodeData;
+				if (nodeData == null)
+					continue;
+				Rect position = new Rect(new Vector2((float)node.Center.X, (float)node.Center.Y),
+					new Vector2((float)node.Width, (float)node.Height));
+				position.position -= position.size * 0.5f;
+				var nodeView = GetNode(nodeData);
+				nodeView.Node.SetPosition(position);
+			}
+
+			schedule.Execute(() => FrameAll());
+		}
+
+
+#endregion
+
+#region Flow
+
 		
+		private List<IGraphNodeData> m_HelperActiveNodes = new List<IGraphNodeData>();
+		private void UpdateFlowState()
+		{
+			var flowGraph = m_Graph as IFlowGraphData;
+			if (flowGraph == null)
+				return;
+			
+			var flows = flowGraph.Flows;
+			foreach (var flowData in flows)
+			{
+				m_HelperActiveNodes.AddRange(flowData.ActiveNodes);
+			}
+
+			nodes.ForEach(node =>
+			{
+				INodeView nodeView = node as INodeView;
+				IFlowNodeView flowView = node as IFlowNodeView;
+				if (nodeView == null || flowView == null)
+					return;
+				var active = m_HelperActiveNodes.Contains(nodeView.data);
+				flowView.SetFlowState(active ? FlowNodeState.Active : FlowNodeState.Inactive);
+			});
+			
+			m_HelperActiveNodes.Clear();
+		}
+
+#endregion
+
+		public void Update()
+		{
+			UpdateFlowState();
+		}
 	}
 }

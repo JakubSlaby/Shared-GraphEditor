@@ -20,6 +20,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			m_GraphView.AddManipulator(m_SelectionDragger = new SelectionDragger());
 			m_GraphView.AddManipulator(m_RectangleSelector = new RectangleSelector());
 			m_GraphView.AddManipulator(m_ClickSelector = new ClickSelector());
+			
 		}
 	}
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Msagl.Core.Layout;
 
 namespace WhiteSparrow.Shared.GraphEditor.Data
@@ -18,14 +17,18 @@ namespace WhiteSparrow.Shared.GraphEditor.Data
 		/// </summary>
 		IReadOnlyCollection<IGraphEdgeData> Edges { get; }
 		
-		/// <summary>
-		/// Collection of active logical flows currently running.
-		/// </summary>
-		IReadOnlyCollection<IGraphFlowData> Flows { get; }
 	}
 
 	public interface IAutoLayoutGraphData
 	{
 		GeometryGraph ToMSAL();
+	}
+
+	public interface IFlowGraphData
+	{
+		/// <summary>
+		/// Collection of active logical flows currently running.
+		/// </summary>
+		IReadOnlyCollection<IGraphFlowData> Flows { get; }
 	}
 }

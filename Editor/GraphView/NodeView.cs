@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.UIElements;
 using WhiteSparrow.Shared.GraphEditor.Data;
 
@@ -60,9 +61,11 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			
 			RefreshExpandedState();
 			RefreshPorts();
+			
+			
 		}
-		
-		
+
+	
 
 		public PortView GetPort(IGraphPortData portData)
 		{
