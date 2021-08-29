@@ -1,4 +1,6 @@
-﻿using UnityEditor.Experimental.GraphView;
+﻿#if UNITY_EDITOR
+using UnityEditor.Experimental.GraphView;
+#endif
 
 namespace WhiteSparrow.Shared.GraphEditor.Data
 {
@@ -17,6 +19,7 @@ namespace WhiteSparrow.Shared.GraphEditor.Data
 
 	public static class GraphPortDataExtensions
 	{
+#if UNITY_EDITOR
 		public static Direction ToUnityGraphDirection(this GraphPortDirection direction)
 		{
 			return direction == GraphPortDirection.Input ? Direction.Input : Direction.Output;
@@ -26,5 +29,6 @@ namespace WhiteSparrow.Shared.GraphEditor.Data
 		{
 			return direction == Direction.Input ? GraphPortDirection.Input : GraphPortDirection.Output;
 		}
+#endif
 	}
 }
