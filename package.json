@@ -1,0 +1,25 @@
+﻿{
+  "name": "whitesparrow.grapheditor",
+  "description": "Base wrapper framework for the Unity UI Elements graph.",
+  "author": "Jakub Slaby <jakubslaby@gmail.com>",
+  "tags": [],
+  "version": "0.1.0",
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/JakubSlaby/GraphEditor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JakubSlaby/GraphEditor/issues"
+  },
+  "directories": {
+    "editor": "./Editor",
+    "runtime": "./Runtime"
+  },
+  "keywords": [
+    "graph",
+    "uielements",
+    "unity"
+  ],
+  "license": "MIT"
+}
