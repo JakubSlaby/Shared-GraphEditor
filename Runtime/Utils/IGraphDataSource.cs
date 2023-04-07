@@ -2,6 +2,8 @@
 {
 	public interface IGraphDataSource
 	{
+#if UNITY_EDITOR
 		string GetScriptPath();
+#endif
 	}
 }

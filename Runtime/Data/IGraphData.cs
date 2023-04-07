@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Msagl.Core.Layout;
 
 namespace WhiteSparrow.Shared.GraphEditor.Data
 {
@@ -21,7 +20,9 @@ namespace WhiteSparrow.Shared.GraphEditor.Data
 
 	public interface IAutoLayoutGraphData
 	{
-		GeometryGraph ToMSAL();
+#if UNITY_EDITOR
+		Microsoft.Msagl.Core.Layout.GeometryGraph ToMSAL();
+#endif
 	}
 
 	public interface IFlowGraphData

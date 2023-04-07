@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿#if UNITY_EDITOR
+using System.Linq;
 using UnityEditor;
-#if UNITY_EDITOR
 using System;
 using System.Diagnostics;
 #endif
@@ -25,6 +25,7 @@ namespace Plugins.Repositories.GraphEditor.Runtime.Utils
 #endif
 		}
 		
+#if UNITY_EDITOR
 		///Get MonoScript reference from type if able
 		public static MonoScript MonoScriptFromType(System.Type targetType) {
 			if ( targetType == null ) return null;
@@ -47,5 +48,6 @@ namespace Plugins.Repositories.GraphEditor.Runtime.Utils
 			}
 			return false;
 		}
+#endif
 	}
 }
