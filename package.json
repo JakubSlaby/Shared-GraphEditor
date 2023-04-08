@@ -1,5 +1,6 @@
 ﻿{
-  "name": "whitesparrow.grapheditor",
+  "name": "com.jakubslaby.grapheditor",
+  "displayName": "Graph Editor",
   "description": "Base wrapper framework for the Unity UI Elements graph.",
   "author": "Jakub Slaby <jakubslaby@gmail.com>",
   "tags": [],
