@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using WhiteSparrow.CommonEditor.EditorPaths;
 
 namespace WhiteSparrow.Shared.GraphEditor.Elements
 {
@@ -26,15 +27,10 @@ namespace WhiteSparrow.Shared.GraphEditor.Elements
 					return s1;
 				s_StyleSheetPath = null;
 			}
-				
-			string path = new System.Diagnostics.StackTrace(0, true).GetFrame(0).GetFileName();
+
+			string path =  EditorPathUtil.FindAssetPathToCallingScript("SplitView.uss");
 			if (string.IsNullOrEmpty(path))
 				return null;
-
-			int indexOfAssets = path.LastIndexOf("Assets", StringComparison.Ordinal);
-			if (indexOfAssets >= 0)
-				path = path.Substring(indexOfAssets);
-			path = path.Replace("SplitView.cs", "SplitView.uss");
 		
 			var s2 = AssetDatabase.LoadAssetAtPath<StyleSheet>(path);
 			if (s2 == null)

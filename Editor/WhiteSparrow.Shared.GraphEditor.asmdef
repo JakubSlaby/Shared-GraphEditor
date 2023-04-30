@@ -2,7 +2,8 @@
     "name": "WhiteSparrow.Shared.GraphEditor",
     "rootNamespace": "",
     "references": [
-        "WhiteSparrow.Shared.GraphEditor.Runtime"
+        "WhiteSparrow.Shared.GraphEditor.Runtime",
+        "WhiteSparrow.Common.CommonEditor"
     ],
     "includePlatforms": [
         "Editor"
