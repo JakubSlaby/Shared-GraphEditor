@@ -2,7 +2,7 @@
 using System.IO;
 using UnityEngine;
 
-namespace Plugins.Repositories.GraphEditor.Editor
+namespace WhiteSparrow.Shared.GraphEditor
 {
 	public class GraphEditorUtil
 	{
