@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Plugins.Repositories.GraphEditor.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using WhiteSparrow.CommonEditor.EditorPaths;
 
 namespace WhiteSparrow.Shared.GraphEditor.Elements
 {
@@ -28,7 +27,7 @@ namespace WhiteSparrow.Shared.GraphEditor.Elements
 				s_StyleSheetPath = null;
 			}
 
-			string path =  EditorPathUtil.FindAssetPathToCallingScript("SplitView.uss");
+			string path =  GraphEditorUtil.FindAssetPathToCallingScript("SplitView.uss");
 			if (string.IsNullOrEmpty(path))
 				return null;
 		
