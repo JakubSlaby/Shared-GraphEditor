@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 using UnityEngine.UIElements;
 using WhiteSparrow.Shared.GraphEditor.Data;
 
@@ -87,6 +86,11 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			m_NodeElements.SetFlowState(state);
 		}
 
+		public void SetFlowState(FlowNodeState state, float strength)
+		{
+			m_NodeElements.SetFlowState(state, strength);
+		}
+
 		FlowNodeState IFlowNodeView.FlowState => m_NodeElements.FlowState;
 	}
 
@@ -108,13 +112,13 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 		}
 
-
 		public void SetFlowState(FlowNodeState state)
 		{
 			m_FlowState = state;
 			m_FlowIndicator.RemoveFromClassList("graph-flow-outline--inactive");
 			m_FlowIndicator.RemoveFromClassList("graph-flow-outline--active");
 			m_FlowIndicator.RemoveFromClassList("graph-flow-outline--complete");
+			m_FlowIndicator.style.opacity = new StyleFloat(100);
 			switch (state)
 			{
 				case FlowNodeState.Active:
@@ -127,6 +131,12 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 					m_FlowIndicator.AddToClassList("graph-flow-outline--inactive");
 					break;
 			}
+		}
+
+		public void SetFlowState(FlowNodeState state, float strength)
+		{
+			SetFlowState(state);
+			m_FlowIndicator.style.opacity = new StyleFloat(strength);
 		}
 
 		public FlowNodeState FlowState => m_FlowState;

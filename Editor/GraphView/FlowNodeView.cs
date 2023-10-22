@@ -10,6 +10,8 @@
 	public interface IFlowNodeView
 	{
 		void SetFlowState(FlowNodeState state);
+		void SetFlowState(FlowNodeState state, float strength);
+		
 		FlowNodeState FlowState { get; }
 	}
 }

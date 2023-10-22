@@ -9,7 +9,12 @@ namespace WhiteSparrow.Shared.GraphEditor.Data
 		Guid guid { get; }
 		Rect position { get; set; }
 		
+		float TimeActivated { get; }
+		float TimeEnded { get; }
+		
 		IReadOnlyCollection<IGraphPortData> InputPorts { get; }
 		IReadOnlyCollection<IGraphPortData> OutputPorts { get; }
 	}
+	
+	
 }

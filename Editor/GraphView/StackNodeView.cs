@@ -73,13 +73,6 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			if (data is IGraphDataSource dataSource)
 			{
 				GraphDataSource.OpenScriptOfType(data.GetType());
-				// var scriptPath = dataSource.GetScriptPath();
-				// if (string.IsNullOrEmpty(scriptPath))
-				// 	return;
-				//
-				//
-				// var asset = AssetDatabase.LoadMainAssetAtPath(scriptPath);
-				// AssetDatabase.OpenAsset(asset);
 			}
 		}
 
@@ -102,6 +95,11 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		void IFlowNodeView.SetFlowState(FlowNodeState state)
 		{
 			m_NodeElements.SetFlowState(state);
+		}
+
+		public void SetFlowState(FlowNodeState state, float strength)
+		{
+			m_NodeElements.SetFlowState(state, strength);
 		}
 
 		FlowNodeState IFlowNodeView.FlowState => m_NodeElements.FlowState;

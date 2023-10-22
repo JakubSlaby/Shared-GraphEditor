@@ -42,11 +42,6 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 				return;
 			BuildGraph();
 			schedule.Execute(LayoutGraph);
-
-			// if (graph is IFlowGraphData flowGraph)
-			// {
-			// 	flowGraph.onFlowStateChange += UpdateFlowState;
-			// }
 		}
 
 		private void BuildGraph()
@@ -73,11 +68,6 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 		private void ClearGraph()
 		{
-			// if (m_Graph is IFlowGraphData flowGraph)
-			// {
-			// 	flowGraph.onFlowStateChange += UpdateFlowState;
-			// }
-			
 			DeleteElements(nodes.ToList());
 			DeleteElements(edges.ToList());
 		}
@@ -110,7 +100,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		}
 		
 		private static string s_CachedScriptPath;
-		private static string GetScriptPath()
+		internal static string GetScriptPath()
 		{
 			if (!string.IsNullOrEmpty(s_CachedScriptPath))
 			{
@@ -167,16 +157,21 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 		
 		private List<IGraphNodeData> m_HelperActiveNodes = new List<IGraphNodeData>();
+		private List<IGraphEdgeData> m_HelperActiveEdges = new List<IGraphEdgeData>();
 		private void UpdateFlowState()
 		{
 			var flowGraph = m_Graph as IFlowGraphData;
 			if (flowGraph == null)
 				return;
 			
+			m_HelperActiveNodes.Clear();
+			m_HelperActiveEdges.Clear();
+			
 			var flows = flowGraph.Flows;
 			foreach (var flowData in flows)
 			{
 				m_HelperActiveNodes.AddRange(flowData.ActiveNodes);
+				m_HelperActiveEdges.AddRange(flowData.ActiveEdges);
 			}
 
 			nodes.ForEach(node =>
@@ -185,8 +180,48 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 				IFlowNodeView flowView = node as IFlowNodeView;
 				if (nodeView == null || flowView == null)
 					return;
-				var active = m_HelperActiveNodes.Contains(nodeView.data);
-				flowView.SetFlowState(active ? FlowNodeState.Active : FlowNodeState.Inactive);
+
+				var data = nodeView.data;
+				var active = m_HelperActiveNodes.Contains(data);
+				if (active)
+				{
+					if(data.TimeEnded > data.TimeActivated)
+						flowView.SetFlowState(FlowNodeState.Complete);
+					else
+						flowView.SetFlowState(FlowNodeState.Active);
+					
+					return;
+				}
+
+				float maxLimit = 0.4f;
+				float strength = Time.realtimeSinceStartup - data.TimeEnded;
+				if (strength >= maxLimit)
+				{
+					flowView.SetFlowState(FlowNodeState.Inactive);
+					return;
+				}
+				
+				flowView.SetFlowState(FlowNodeState.Complete, 1 - (strength / maxLimit));
+			});
+
+			edges.ForEach(edge =>
+			{
+				EdgeView edgeView = edge as EdgeView;
+				IGraphEdgeData edgeData = edgeView?.data;
+				if (edgeData == null)
+					return;
+
+				bool active = m_HelperActiveEdges.Contains(edgeData);
+				if (active)
+				{
+					edge.input.portColor = Color.yellow;
+					edge.output.portColor = Color.yellow;
+				}
+				else
+				{
+					edge.input.portColor = new Color(0.9411765f, 0.9411765f, 0.9411765f);
+					edge.output.portColor = new Color(0.9411765f, 0.9411765f, 0.9411765f);
+				}
 			});
 			
 			m_HelperActiveNodes.Clear();

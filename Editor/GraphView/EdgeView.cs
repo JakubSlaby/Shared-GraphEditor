@@ -3,7 +3,7 @@ using WhiteSparrow.Shared.GraphEditor.Data;
 
 namespace WhiteSparrow.Shared.GraphEditor.View
 {
-	public class EdgeView : Edge
+	public class EdgeView : Edge, IFlowEdgeView
 	{
 		private IGraphEdgeData m_Data;
 		public IGraphEdgeData data => m_Data;
@@ -15,9 +15,14 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		{
 			m_Data = data;
 			capabilities = Capabilities.Selectable;
+			
+			this.AddToClassList("graph-edge-active");
+			
 		}
+	}
 
-
+	public interface IFlowEdgeView
+	{
 		
 	}
 
