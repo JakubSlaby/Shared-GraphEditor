@@ -15,6 +15,10 @@ namespace WhiteSparrow.Shared.GraphEditor.Data
 		IReadOnlyCollection<IGraphPortData> InputPorts { get; }
 		IReadOnlyCollection<IGraphPortData> OutputPorts { get; }
 	}
-	
-	
+
+	public interface INestedGraphNodeData : IGraphNodeData
+	{
+		Type NestedGraphType { get; }
+		IGraphData NestedGraph { get; }
+	}
 }

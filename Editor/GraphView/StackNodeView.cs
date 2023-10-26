@@ -52,8 +52,19 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 				m_OutputPorts.Add(new Tuple<IGraphPortData, PortView>(outputPort, port));
 			}
 
-			var placeholder = this.Q("stackPlaceholderContainer", (string) null);
-			placeholder.RemoveFromHierarchy();
+			if (nodeData is INestedGraphNodeData nestedNodeData)
+			{
+				var nestedView = new Button();
+				nestedView.text = "Nested Graph";
+				nestedView.clicked += () => Debug.Log("CLICK");
+				mainContainer.Add(nestedView);
+			}
+
+			var placeholderContainer = this.Q("stackPlaceholderContainer", (string) null);
+			placeholderContainer.RemoveFromHierarchy();
+			
+			var separatorContainer = this.Q("stackSeparatorContainer", (string) null);
+			separatorContainer.RemoveFromHierarchy();
 
 			m_NodeElements = new NodeViewAdditionalElements(this);
 			
@@ -103,5 +114,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		}
 
 		FlowNodeState IFlowNodeView.FlowState => m_NodeElements.FlowState;
+		
+		
 	}
 }
