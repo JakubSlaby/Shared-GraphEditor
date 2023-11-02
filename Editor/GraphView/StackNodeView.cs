@@ -25,7 +25,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		{
 			m_Data = nodeData;
 			userData = nodeData;
-			headerContainer.Add(new Label(nodeData.GetType().Name));
+			headerContainer.Add(new Label(nodeData.NodeDisplayName));
 
 			foreach (var inputPort in nodeData.InputPorts)
 			{
@@ -55,7 +55,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			if (nodeData is INestedGraphNodeData nestedNodeData)
 			{
 				var nestedView = new Button();
-				nestedView.text = "Nested Graph";
+				nestedView.text = nestedNodeData.NestedGraphDisplayName;
 				nestedView.clicked += () => Debug.Log("CLICK");
 				mainContainer.Add(nestedView);
 			}

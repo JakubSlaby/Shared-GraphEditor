@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Msagl.Core.Geometry.Curves;
 using Microsoft.Msagl.Core.Layout;
+using Microsoft.Msagl.Core.Routing;
 using Microsoft.Msagl.Layout.Layered;
 using Microsoft.Msagl.Miscellaneous;
 using Microsoft.Msagl.Prototype.Ranking;
@@ -131,10 +132,9 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 			GeometryGraph geometryGraph = autoLayoutGraphData.ToMSAL();
 			RankingLayoutSettings layoutSettings = new RankingLayoutSettings();
-			
 			// SugiyamaLayoutSettings layoutSettings = new SugiyamaLayoutSettings();
 			// layoutSettings.Transformation = PlaneTransformation.Rotation(Math.PI);
-			// layoutSettings.GroupSplit = 10;
+			// layoutSettings.GroupSplit = 30;
 			LayoutHelpers.CalculateLayout(geometryGraph, layoutSettings, null);
 			geometryGraph.UpdateBoundingBox();
 
