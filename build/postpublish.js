@@ -24,6 +24,6 @@ function revertPackageChanges(absoluteRepositoryPath, relativeFilePath)
     
     return 0;
 }
-console.log("POST PUBLISH");
+console.log("Post publish script: Remove any chanegs to package.json");
 var result = revertPackageChanges(repoPath, packageJsonPath);
 return process.exit(result);

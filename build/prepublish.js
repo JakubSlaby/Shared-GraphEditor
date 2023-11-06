@@ -50,6 +50,7 @@ function updateRepositoryUrl() {
     return 0;
 }
 
+console.log("Pre Publish: Update the repo and bugs url to currenly checked out repo, for support in forked repositories.");
 // Execute the function
 var result = updateRepositoryUrl();
 
