@@ -23,8 +23,8 @@
     "unity"
   ],
   "scripts": {
-    "prepublishOnly": "node build/prepublish.js",
-    "postpublish": "node build/postpublish.js"
+    "prepublishOnly": "node package/prepublish.js",
+    "postpublish": "node package/postpublish.js"
   },
   "license": "MIT"
 }
