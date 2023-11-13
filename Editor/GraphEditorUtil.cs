@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace WhiteSparrow.Shared.GraphEditor
 {
@@ -45,7 +46,8 @@ namespace WhiteSparrow.Shared.GraphEditor
 			if (match.Success)
 				path = path.Remove(match.Groups[0].Index, match.Groups[0].Length);
 			if (path.Contains("PackageCache"))
-				return "Packages" + path.Substring(path.IndexOf("PackageCache", StringComparison.Ordinal) + "PackageCache".Length);
+				path = "Packages" + path.Substring(path.IndexOf("PackageCache", StringComparison.Ordinal) + "PackageCache".Length);
+			Debug.Log(path);
 			return path;
 		}
 		
