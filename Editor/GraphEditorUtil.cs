@@ -43,7 +43,7 @@ namespace WhiteSparrow.Shared.GraphEditor
 				return "Assets" + path.Substring(Application.dataPath.Length);
 			var match = s_PackageVersionRegex.Match(path);
 			if (match.Success)
-				path = path.Remove(match.Index, match.Length);
+				path = path.Remove(match.Groups[0].Index, match.Groups[0].Length);
 			if (path.Contains("PackageCache"))
 				return "Packages" + path.Substring(path.IndexOf("PackageCache", StringComparison.Ordinal) + "PackageCache".Length);
 			return path;
