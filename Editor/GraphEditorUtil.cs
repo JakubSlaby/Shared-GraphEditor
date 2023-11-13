@@ -35,7 +35,7 @@ namespace WhiteSparrow.Shared.GraphEditor
 
 		}
 
-		private static Regex s_PackageVersionRegex = new Regex("PackageCache/[^@]*(@[^/]+)");
+		private static Regex s_PackageVersionRegex = new Regex("PackageCache/[^@]*(?<rev>@[^/]+)");
 		
 		public static string FindAssetPathToCallingScript(string relativePath = null)
 		{
@@ -44,7 +44,7 @@ namespace WhiteSparrow.Shared.GraphEditor
 				return "Assets" + path.Substring(Application.dataPath.Length);
 			var match = s_PackageVersionRegex.Match(path);
 			if (match.Success)
-				path = path.Remove(match.Groups[0].Index, match.Groups[0].Length);
+				path = path.Remove(match.Groups["rev"].Index, match.Groups["rev"].Length);
 			if (path.Contains("PackageCache"))
 				path = "Packages" + path.Substring(path.IndexOf("PackageCache", StringComparison.Ordinal) + "PackageCache".Length);
 			Debug.Log(path);
