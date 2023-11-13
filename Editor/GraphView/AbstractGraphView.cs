@@ -24,7 +24,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 		public AbstractGraphView()
 		{
-			this.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>(Path.Combine(GetScriptPath(), "GraphView.uss")));
+			this.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>(GraphEditorUtil.FindAssetPathToCallingScript("GraphView.uss")));
 		
 			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 			
@@ -100,27 +100,6 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		{
 			return edges.ToList().FirstOrDefault(e => e is EdgeView ev && ev.data == data) as EdgeView;
 		}
-		
-		private static string s_CachedScriptPath;
-		internal static string GetScriptPath()
-		{
-			if (!string.IsNullOrEmpty(s_CachedScriptPath))
-			{
-				return s_CachedScriptPath;
-			}
-				
-			string path = new System.Diagnostics.StackTrace(0, true).GetFrame(0).GetFileName();
-			if (string.IsNullOrEmpty(path))
-				return null;
-
-			int indexOfAssets = path.LastIndexOf("Assets", StringComparison.Ordinal);
-			if (indexOfAssets >= 0)
-				path = path.Substring(indexOfAssets);
-			path = path.Replace("AbstractGraphView.cs", string.Empty);
-			
-			return s_CachedScriptPath = path;
-		}
-
 
 #region Layout
 		
