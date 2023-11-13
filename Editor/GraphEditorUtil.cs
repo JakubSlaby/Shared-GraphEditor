@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace WhiteSparrow.Shared.GraphEditor
@@ -33,11 +34,16 @@ namespace WhiteSparrow.Shared.GraphEditor
 
 		}
 
+		private static Regex s_PackageVersionRegex = new Regex("PackageCache/[^@]*(@[^/]+)");
+		
 		public static string FindAssetPathToCallingScript(string relativePath = null)
 		{
 			string path = FindAbsolutePathToCallingScript(relativePath, 1);
 			if (path.StartsWith(Application.dataPath))
 				return "Assets" + path.Substring(Application.dataPath.Length);
+			var match = s_PackageVersionRegex.Match(path);
+			if (match.Success)
+				path = path.Remove(match.Index, match.Length);
 			if (path.Contains("PackageCache"))
 				return "Packages" + path.Substring(path.IndexOf("PackageCache", StringComparison.Ordinal) + "PackageCache".Length);
 			return path;
