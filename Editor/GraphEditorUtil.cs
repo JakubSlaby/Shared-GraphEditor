@@ -39,7 +39,7 @@ namespace WhiteSparrow.Shared.GraphEditor
 			if (path.StartsWith(Application.dataPath))
 				return "Assets" + path.Substring(Application.dataPath.Length);
 			if (path.Contains("PackageCache"))
-				return "Packages/" + path.Substring(path.IndexOf("PackageCache", StringComparison.Ordinal) + "PackageCache".Length);
+				return "Packages" + path.Substring(path.IndexOf("PackageCache", StringComparison.Ordinal) + "PackageCache".Length);
 			return path;
 		}
 		
