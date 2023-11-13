@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 
@@ -37,6 +38,8 @@ namespace WhiteSparrow.Shared.GraphEditor
 			string path = FindAbsolutePathToCallingScript(relativePath, 1);
 			if (path.StartsWith(Application.dataPath))
 				return "Assets" + path.Substring(Application.dataPath.Length);
+			if (path.Contains("PackageCache"))
+				return "Packages/" + path.Substring(path.IndexOf("PackageCache", StringComparison.Ordinal) + "PackageCache".Length);
 			return path;
 		}
 		
