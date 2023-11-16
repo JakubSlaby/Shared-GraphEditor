@@ -4,7 +4,7 @@
   "description": "Base wrapper framework for the Unity UI Elements graph.",
   "author": "Jakub Slaby <jakubslaby@gmail.com>",
   "tags": [],
-  "version": "0.1.5",
+  "version": "0.1.6",
   "dependencies": {},
   "repository": {
     "type": "git",

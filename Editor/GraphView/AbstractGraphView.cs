@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Msagl.Core.Geometry.Curves;
 using Microsoft.Msagl.Core.Layout;
 using Microsoft.Msagl.Core.Routing;
+using Microsoft.Msagl.Layout.Incremental;
 using Microsoft.Msagl.Layout.Layered;
 using Microsoft.Msagl.Miscellaneous;
 using Microsoft.Msagl.Prototype.Ranking;
@@ -101,19 +102,44 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			return edges.ToList().FirstOrDefault(e => e is EdgeView ev && ev.data == data) as EdgeView;
 		}
 
-#region Layout
+		public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+		{
+			base.BuildContextualMenu(evt);
+			
+			
+			evt.menu.AppendAction("Change Layout", ShowLayoutOptions);
+		}
+
+		private void ShowLayoutOptions(DropdownMenuAction obj)
+		{
+			LayoutOptionsWindow.ShowWindow(this);
+		}
+
+		#region Layout
 		
 		private void LayoutGraph()
+		{
+			// FastIncrementalLayoutSettings layoutSettings = new FastIncrementalLayoutSettings();
+			// RankingLayoutSettings layoutSettings = new RankingLayoutSettings();
+			SugiyamaLayoutSettings sugiyamaSettings = new SugiyamaLayoutSettings();
+			sugiyamaSettings.GroupSplit = 30;
+
+			SetLayout(sugiyamaSettings);
+		}
+
+		public void SetLayout(LayoutAlgorithmSettings layoutSettings)
 		{
 			var autoLayoutGraphData = m_Graph as IAutoLayoutGraphData;
 			if (autoLayoutGraphData == null)
 				return;
 
+			if (layoutSettings is SugiyamaLayoutSettings sugu)
+			{
+				sugu.Transformation = PlaneTransformation.Rotation(Math.PI);
+			}
+			
 			GeometryGraph geometryGraph = autoLayoutGraphData.ToMSAL();
-			RankingLayoutSettings layoutSettings = new RankingLayoutSettings();
-			// SugiyamaLayoutSettings layoutSettings = new SugiyamaLayoutSettings();
-			// layoutSettings.Transformation = PlaneTransformation.Rotation(Math.PI);
-			// layoutSettings.GroupSplit = 30;
+
 			LayoutHelpers.CalculateLayout(geometryGraph, layoutSettings, null);
 			geometryGraph.UpdateBoundingBox();
 
