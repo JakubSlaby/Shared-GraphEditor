@@ -4,8 +4,11 @@ using System.IO;
 using System.Linq;
 using Microsoft.Msagl.Core.Geometry.Curves;
 using Microsoft.Msagl.Core.Layout;
+using Microsoft.Msagl.Core.Routing;
+using Microsoft.Msagl.Layout.Incremental;
 using Microsoft.Msagl.Layout.Layered;
 using Microsoft.Msagl.Miscellaneous;
+using Microsoft.Msagl.Prototype.Ranking;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -22,7 +25,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 		public AbstractGraphView()
 		{
-			this.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>(Path.Combine(GetScriptPath(), "GraphView.uss")));
+			this.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>(GraphEditorUtil.FindAssetPathToCallingScript("GraphView.uss")));
 		
 			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 			
@@ -98,39 +101,45 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 		{
 			return edges.ToList().FirstOrDefault(e => e is EdgeView ev && ev.data == data) as EdgeView;
 		}
-		
-		private static string s_CachedScriptPath;
-		internal static string GetScriptPath()
-		{
-			if (!string.IsNullOrEmpty(s_CachedScriptPath))
-			{
-				return s_CachedScriptPath;
-			}
-				
-			string path = new System.Diagnostics.StackTrace(0, true).GetFrame(0).GetFileName();
-			if (string.IsNullOrEmpty(path))
-				return null;
 
-			int indexOfAssets = path.LastIndexOf("Assets", StringComparison.Ordinal);
-			if (indexOfAssets >= 0)
-				path = path.Substring(indexOfAssets);
-			path = path.Replace("AbstractGraphView.cs", string.Empty);
+		public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+		{
+			base.BuildContextualMenu(evt);
 			
-			return s_CachedScriptPath = path;
+			
+			evt.menu.AppendAction("Change Layout", ShowLayoutOptions);
 		}
 
+		private void ShowLayoutOptions(DropdownMenuAction obj)
+		{
+			LayoutOptionsWindow.ShowWindow(this);
+		}
 
-#region Layout
+		#region Layout
 		
 		private void LayoutGraph()
+		{
+			// FastIncrementalLayoutSettings layoutSettings = new FastIncrementalLayoutSettings();
+			// RankingLayoutSettings layoutSettings = new RankingLayoutSettings();
+			SugiyamaLayoutSettings sugiyamaSettings = new SugiyamaLayoutSettings();
+			sugiyamaSettings.GroupSplit = 30;
+
+			SetLayout(sugiyamaSettings);
+		}
+
+		public void SetLayout(LayoutAlgorithmSettings layoutSettings)
 		{
 			var autoLayoutGraphData = m_Graph as IAutoLayoutGraphData;
 			if (autoLayoutGraphData == null)
 				return;
 
+			if (layoutSettings is SugiyamaLayoutSettings sugu)
+			{
+				sugu.Transformation = PlaneTransformation.Rotation(Math.PI);
+			}
+			
 			GeometryGraph geometryGraph = autoLayoutGraphData.ToMSAL();
-			SugiyamaLayoutSettings layoutSettings = new SugiyamaLayoutSettings();
-			layoutSettings.Transformation = PlaneTransformation.Rotation(Math.PI);
+
 			LayoutHelpers.CalculateLayout(geometryGraph, layoutSettings, null);
 			geometryGraph.UpdateBoundingBox();
 
