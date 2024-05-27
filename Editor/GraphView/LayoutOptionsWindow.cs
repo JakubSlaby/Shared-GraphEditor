@@ -15,14 +15,14 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 {
 	public class LayoutOptionsWindow : EditorWindow
 	{
-		public static void ShowWindow(AbstractGraphView graphView)
+		public static void ShowWindow(CustomGraphView graphView)
 		{
 			LayoutOptionsWindow window = EditorWindow.GetWindow<LayoutOptionsWindow>();
 			window.m_TargetGraphView = graphView;
 			window.Show();
 		}
 
-		private AbstractGraphView m_TargetGraphView;
+		private CustomGraphView m_TargetGraphView;
 
 		private void OnEnable()
 		{

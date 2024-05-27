@@ -56,7 +56,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			{
 				var nestedView = new Button();
 				nestedView.text = nestedNodeData.NestedGraphDisplayName;
-				nestedView.clicked += () => Debug.Log("CLICK");
+				nestedView.clickable.clickedWithEventInfo += NestedGraphClick;
 				mainContainer.Add(nestedView);
 			}
 
@@ -71,6 +71,17 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			RefreshExpandedState();
 			RefreshPorts();
 		}
+
+		private void NestedGraphClick(EventBase obj)
+		{
+			if (m_Data is not INestedGraphNodeData nestedNodeData)
+				return;
+			var container = this.FindInParent<IGraphViewContainer>();
+			
+			if(container != null)
+				container.ShowNestedGraph(nestedNodeData);
+		}
+
 		public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
 		{
 			base.BuildContextualMenu(evt);

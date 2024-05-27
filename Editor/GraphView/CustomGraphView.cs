@@ -18,23 +18,25 @@ using Port = UnityEditor.Experimental.GraphView.Port;
 
 namespace WhiteSparrow.Shared.GraphEditor.View
 {
-	public class AbstractGraphView : GraphView
+	public class CustomGraphView : GraphView
 	{
 		private IGraphData m_Graph;
 		private AbstractGraphViewManipulators m_DefaultManipulators;
 
-		public AbstractGraphView()
+		public CustomGraphView()
 		{
+			this.AddToClassList("sparrowGraphEditor-graphView");
+
 			this.styleSheets.Add(AssetDatabase.LoadAssetAtPath<StyleSheet>(GraphEditorUtil.FindAssetPathToCallingScript("GraphView.uss")));
-		
+			
 			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
 			
 			m_DefaultManipulators = new AbstractGraphViewManipulators(this);
-
+		
 			var grid = new GridBackground();
 			Insert(0, grid);
-			
 		}
+		
 
 		public void SetGraph(IGraphData graph)
 		{

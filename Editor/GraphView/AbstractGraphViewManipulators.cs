@@ -5,14 +5,14 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 {
 	public class AbstractGraphViewManipulators
 	{
-		private AbstractGraphView m_GraphView;
+		private CustomGraphView m_GraphView;
 
 		private ContentDragger m_ContentDragger;
 		private SelectionDragger m_SelectionDragger;
 		private RectangleSelector m_RectangleSelector;
 		private ClickSelector m_ClickSelector;
 		
-		public AbstractGraphViewManipulators(AbstractGraphView graphView)
+		public AbstractGraphViewManipulators(CustomGraphView graphView)
 		{
 			m_GraphView = graphView;
 			

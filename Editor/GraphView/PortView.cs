@@ -22,7 +22,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 			
 			public void OnDropOutsidePort(Edge edge, Vector2 position)
 			{
-				AbstractGraphView graphView = edge.GetFirstAncestorOfType<AbstractGraphView>();
+				CustomGraphView graphView = edge.GetFirstAncestorOfType<CustomGraphView>();
 				EdgeView obsoleteEdge = edge as EdgeView;
 				IGraphEdgeData edgeData = obsoleteEdge?.data;
 				if (edgeData == null)
@@ -39,7 +39,7 @@ namespace WhiteSparrow.Shared.GraphEditor.View
 
 			public void OnDrop(GraphView gv, Edge e)
 			{
-				AbstractGraphView graphView = gv as AbstractGraphView;
+				CustomGraphView graphView = gv as CustomGraphView;
 				EdgeView edge = e as EdgeView;
 				if (edge == null || edge.data == null)
 					return;

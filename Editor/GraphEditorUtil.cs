@@ -3,11 +3,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Debug = UnityEngine.Debug;
 
 namespace WhiteSparrow.Shared.GraphEditor
 {
-	public class GraphEditorUtil
+	public static class GraphEditorUtil
 	{
 		public static string FindAbsolutePathToCallingScript(string relativePath = null, int skipFrames = 0)
 		{
@@ -49,6 +50,20 @@ namespace WhiteSparrow.Shared.GraphEditor
 				path = "Packages" + path.Substring(path.IndexOf("PackageCache", StringComparison.Ordinal) + "PackageCache".Length);
 			Debug.Log(path);
 			return path;
+		}
+
+		public static T FindInParent<T>(this VisualElement instance)
+		{
+			var iterator = instance;
+			while (iterator != null)
+			{
+				if (iterator is T iT)
+					return iT;
+				
+				iterator = iterator.parent;
+			}
+
+			return default(T);
 		}
 		
 		

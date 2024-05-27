@@ -1,3 +1,14 @@
+.sparrowGraphEditor-container
+{
+    flex-grow: 1;
+}
+
+.sparrowGraphEditor-graphView
+{
+    flex-grow: 1;
+}
+
+
 .stack-node > #graph-flow-outline 
 {
     border-radius: 10px;
