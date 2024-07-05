@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Debug = UnityEngine.Debug;
@@ -48,8 +50,58 @@ namespace WhiteSparrow.Shared.GraphEditor
 				path = path.Remove(match.Groups["rev"].Index, match.Groups["rev"].Length);
 			if (path.Contains("PackageCache"))
 				path = "Packages" + path.Substring(path.IndexOf("PackageCache", StringComparison.Ordinal) + "PackageCache".Length);
+			if (!path.Contains("Packages") && Path.IsPathRooted(path))
+			{
+				if (!FindPackageName(path, out string packageName, out string packageRoot))
+				{
+					throw new Exception("Unable to resolve package root");
+				}
+				
+				if (path.StartsWith(packageRoot))
+					return $"Packages/{packageName}" + path.Substring(packageRoot.Length);
+				
+			}
 			Debug.Log(path);
 			return path;
+		}
+
+		private static bool FindPackageName(string path, out string packageName, out string packageRoot)
+		{
+			packageName = packageRoot = null;
+			string packagePath = FindPackageRoot(path);
+			if (packagePath == null)
+				return false;
+			FileInfo packageFile = new FileInfo(packagePath);
+			packageRoot = packageFile.Directory?.FullName;
+
+			string json = File.ReadAllText(packagePath);
+			try
+			{
+				var jObject = JObject.Parse(json);
+				packageName = jObject["name"]?.Value<string>() ?? null;
+				return !string.IsNullOrWhiteSpace(packageName);
+			}
+			catch (Exception e)
+			{
+				return false;
+			}
+			
+		}
+		private static string FindPackageRoot(string path)
+		{
+			FileInfo file = new FileInfo(path);
+			DirectoryInfo directory = file.Directory;
+
+			while (directory != null)
+			{
+				string candidate = Path.Combine(directory.FullName, "package.json");
+				if (File.Exists(candidate))
+					return candidate;
+                
+				directory = directory.Parent;
+			}
+
+			return null;
 		}
 
 		public static T FindInParent<T>(this VisualElement instance)
