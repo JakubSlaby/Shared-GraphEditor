@@ -2,16 +2,18 @@
     "name": "WhiteSparrow.Shared.GraphEditor",
     "rootNamespace": "",
     "references": [
-        "WhiteSparrow.Shared.GraphEditor.Runtime",
-        "WhiteSparrow.Common.CommonEditor"
+        "WhiteSparrow.Shared.GraphEditor.Runtime"
     ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll",
+        "AutomaticGraphLayout.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
